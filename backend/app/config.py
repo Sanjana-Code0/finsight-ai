@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from typing import Optional
+from functools import lru_cache
+from typing import List, Literal
 
 class Settings(BaseSettings):
     # Supabase configuration
@@ -16,8 +17,15 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
     # Environment
-    ENVIRONMENT: str = "development"
+    ENVIRONMENT: Literal["development", "production"] = "development"
+    
+    # CORS
+    CORS_ORIGINS: List[str] = ["*"] # Default to all, but can be overridden in .env
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-settings = Settings()
+@lru_cache()
+def get_settings() -> Settings:
+    return Settings()
+
+settings = get_settings()
