@@ -44,6 +44,7 @@ Thumbs.db
 *.swp
 *.swo
 
-backend/ml/models/*.joblib
-backend/ml/models/*.json
+# Keep model metadata but ignore large binary artifacts
 !backend/ml/models/.gitkeep
+!backend/ml/models/feature_names.json
+!backend/ml/models/training_metrics.json
