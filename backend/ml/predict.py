@@ -4,9 +4,15 @@ import joblib
 import pandas as pd
 import numpy as np
 
+# Resolve models directory relative to this file's location:
+# - Local: backend/ml/../ml/models  → backend/ml/models ✓
+# - Docker (WORKDIR /app): /app/ml/../ml/models → /app/ml/models ✓
+_ML_DIR = os.path.dirname(os.path.abspath(__file__))
+_DEFAULT_MODELS_DIR = os.path.join(_ML_DIR, 'models')
+
 class PredictionService:
-    def __init__(self, models_dir='backend/ml/models'):
-        self.models_dir = models_dir
+    def __init__(self, models_dir=None):
+        self.models_dir = models_dir or _DEFAULT_MODELS_DIR
         self.artifacts = {}
         self._load_artifacts()
 
@@ -15,7 +21,7 @@ class PredictionService:
         try:
             metrics_path = os.path.join(self.models_dir, 'training_metrics.json')
             if not os.path.exists(metrics_path):
-                print("⚠️ No models found. Please run training first.")
+                print("[WARNING] No models found. Please run training first.")
                 return
 
             with open(metrics_path, 'r') as f:
@@ -36,7 +42,7 @@ class PredictionService:
             self.artifacts['best_model_name'] = best_model_name
             
         except Exception as e:
-            print(f"❌ Error loading artifacts: {e}")
+            print(f"[ERROR] Error loading artifacts: {e}")
 
     def _prepare_input(self, user_input):
         """Converts raw input dict to processed DataFrame, handling missing values."""
