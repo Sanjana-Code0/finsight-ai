@@ -43,3 +43,7 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+backend/ml/models/*.joblib
+backend/ml/models/*.json
+!backend/ml/models/.gitkeep
